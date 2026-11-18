@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tem Perto</title>
+<style>
+:root{
+ --cyan:#00A6CE;--deep:#007FA3;--pale:#E8F9FD;
+ --ink:#183744;--muted:#78909A;--line:#E5EFF2;--white:#fff;
+ --green:#1E9E63;--green-bg:#E8F8F0;
+ --orange:#D97706;--orange-bg:#FEF3C7;
+ --red:#DC2626;--red-bg:#FEE2E2;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#EAF3F6;color:var(--ink);
+ font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:440px;min-height:100vh;margin:auto;background:white;
+ padding-bottom:85px;position:relative;box-shadow:0 0 45px #164b5b12}
+header{height:76px;padding:14px 20px;display:flex;justify-content:space-between;
+ align-items:center;background:white;border-bottom:1px solid #f0f5f7;
+ position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:900;letter-spacing:-1.5px;color:var(--deep)}
+.logo span{color:var(--cyan)}
+.location{font-size:10px;color:var(--muted);margin-top:3px}
+.avatar{width:42px;height:42px;border:1.5px solid #BCE7F2;border-radius:50%;
+ background:var(--pale);color:var(--deep);font-weight:850;padding:0;
+ overflow:hidden;display:grid;place-items:center}
+.avatar img{width:100%;height:100%;object-fit:cover}
+main{padding:18px 19px}
+h1{font-size:25px;letter-spacing:-.8px;margin:5px 0 7px}
+h2{font-size:19px;margin:0;letter-spacing:-.4px}
+h3{font-size:14px;margin:0}
+p{line-height:1.5}
+.muted{font-size:12px;color:var(--muted)}
+.eyebrow{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;
+ color:var(--deep);font-weight:850}
+
+/* TELA DE ENTRADA (ONBOARDING) */
+.welcome-wrap{padding:26px 20px 30px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.welcome-head{text-align:center;margin-bottom:24px}
+.welcome-head .logo{font-size:32px;margin-bottom:8px}
+.welcome-head h1{font-size:23px;line-height:1.2;margin:8px 0}
+.welcome-head p{font-size:13px;color:#547784;margin:0}
+.role-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+ background:white;border:2px solid var(--line);border-radius:20px;
+ padding:16px;margin-bottom:14px;transition:all .18s;position:relative}
+.role-card:hover{border-color:var(--cyan);background:#F8FDFF;transform:translateY(-2px);
+ box-shadow:0 10px 24px #00a6ce18}
+.role-card-art{width:76px;height:82px;flex-shrink:0;background:var(--pale);
+ border-radius:15px;display:grid;place-items:center;padding:4px}
+.role-card-art svg{width:100%;height:100%}
+.role-card-body{flex:1;min-width:0}
+.role-badge{display:inline-block;background:var(--pale);color:var(--deep);
+ font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;margin-bottom:6px}
+.role-card h2{font-size:17px;margin-bottom:4px;color:var(--ink)}
+.role-card p{font-size:11.5px;color:#547784;margin:0;line-height:1.45}
+.role-examples{font-size:10.5px;color:var(--deep);font-weight:700;margin-top:7px}
+.welcome-footer{text-align:center;margin-top:16px;font-size:11px;color:var(--muted)}
+
+/* UPLOAD DE FOTO DE PERFIL */
+.photo-picker{display:flex;flex-direction:column;align-items:center;
+ background:var(--pale);border-radius:18px;padding:16px;margin:14px 0 18px}
+.photo-circle{width:86px;height:86px;border-radius:50%;background:white;
+ border:2.5px dashed #8AD4E6;display:grid;place-items:center;
+ overflow:hidden;color:var(--deep);font-size:28px;margin-bottom:10px}
+.photo-circle img{width:100%;height:100%;object-fit:cover}
+.photo-btn{background:white;color:var(--deep);border:1px solid #BCE7F2;
+ border-radius:10px;padding:8px 14px;font-size:11.5px;font-weight:800}
+
+/* CHIPS DE CATEGORIAS DO PROFISSIONAL */
+.chip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+.chip-option{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);
+ border-radius:11px;padding:10px 12px;font-size:12px;font-weight:700;background:#FBFDFE;cursor:pointer}
+.chip-option input{accent-color:var(--cyan);width:16px;height:16px;margin:0}
+
+/* CREDIBILIDADE E MARCADORES */
+.cred-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;
+ border-radius:30px;font-size:11px;font-weight:850}
+.cred-new{background:#E8F4F8;color:var(--deep)}
+.cred-green{background:var(--green-bg);color:var(--green)}
+.cred-orange{background:var(--orange-bg);color:var(--orange)}
+.cred-red{background:var(--red-bg);color:var(--red)}
+.cred-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.progress-track{width:100%;height:8px;background:#E5EFF2;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.progress-fill{height:100%;background:var(--cyan);border-radius:99px;transition:width .3s}
+.rule-box{border-left:3.5px solid var(--cyan);padding:10px 12px;background:#F7FCFD;
+ border-radius:0 12px 12px 0;margin-bottom:9px;font-size:11.5px;line-height:1.45}
+.rule-box.green{border-left-color:var(--green);background:#F3FBF7}
+.rule-box.orange{border-left-color:var(--orange);background:#FFFBEB}
+.rule-box.red{border-left-color:var(--red);background:#FEF2F2}
+
+.hero{display:flex;align-items:center;gap:6px;background:var(--pale);
+ border-radius:21px;padding:16px 14px 16px 18px;min-height:178px;overflow:hidden}
+.hero-copy{flex:1;min-width:0}
+.hero h1{font-size:23px;line-height:1.13}
+.hero p{font-size:11px;color:#547784;margin:8px 0 13px}
+.hero-art{width:142px;flex-shrink:0}
+.hero-art svg{width:100%;height:auto;display:block}
+.primary{background:var(--cyan);color:white;border:0;border-radius:11px;
+ padding:12px 16px;font-size:12px;font-weight:800}
+.secondary{background:white;color:var(--deep);border:1px solid #D9EDF2;
+ border-radius:10px;padding:10px 13px;font-size:12px;font-weight:750}
+.danger-btn{background:#FFF5F5;color:#C93B3B;border:1px solid #FAD4D4;
+ border-radius:11px;padding:12px 16px;font-size:12px;font-weight:800;margin-top:16px}
+.full{width:100%}
+.section{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px}
+.link{background:none;border:0;color:var(--deep);font-size:11px;font-weight:800}
+.categories{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.category{border:1px solid var(--line);border-radius:16px;background:white;
+ padding:8px 4px 11px;text-align:center;min-width:0;transition:transform .15s,border-color .15s}
+.category:hover{transform:translateY(-2px);border-color:#BCE7F2}
+.category svg{width:100%;height:96px;display:block;margin-bottom:2px}
+.category strong{font-size:11px;color:var(--ink)}
+.card{border:1px solid var(--line);border-radius:16px;padding:15px;
+ margin-bottom:11px;background:white}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.pill{background:var(--pale);color:var(--deep);padding:6px 9px;
+ border-radius:30px;font-size:10px;font-weight:800}
+.price{font-size:21px;font-weight:900;color:var(--deep)}
+.offer-title{font-size:14px;font-weight:800;margin:12px 0 6px}
+.meta{font-size:11px;color:var(--muted);line-height:1.9}
+.actions{display:flex;gap:8px;margin-top:13px}
+.actions button{flex:1}
+.profile-hero{background:var(--pale);border-radius:19px;padding:20px;text-align:center}
+.profile-avatar{width:82px;height:82px;border-radius:50%;background:white;
+ margin:0 auto 10px;display:grid;place-items:center;color:var(--deep);
+ font-size:25px;font-weight:850;border:2.5px solid #CDEEF6;overflow:hidden}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+.stat{background:white;border-radius:12px;padding:10px 3px}
+.stat strong{display:block;color:var(--deep);font-size:13px}
+.stat small{font-size:9px;color:var(--muted)}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 2px;
+ width:100%;background:white;border:0;border-bottom:1px solid var(--line);
+ text-align:left;color:var(--ink)}
+.menu-icon{width:37px;height:37px;background:var(--pale);border-radius:11px;
+ display:grid;place-items:center;color:var(--deep);font-size:17px}
+.menu-item strong{font-size:12px}
+.menu-item small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.arrow{margin-left:auto;color:#9BB1BA}
+.page{display:none}.page.active{display:block}
+.form-group{margin:13px 0}
+.form-group label{font-size:11px;font-weight:800;display:block;margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{
+ width:100%;border:1px solid var(--line);border-radius:10px;
+ background:#FBFDFE;padding:12px;font-size:12px;color:var(--ink);outline:none}
+.form-group textarea{min-height:75px;resize:vertical}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--cyan)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.notice{background:#F0FAFC;padding:12px;border-radius:12px;
+ font-size:11px;color:#537583;line-height:1.5}
+.notice.warn{background:#FFF9EB;color:#7C5D18;border:1px solid #F7E3B5}
+.notice.danger{background:var(--red-bg);color:var(--red);border:1px solid #FCA5A5}
+.notice.success{background:var(--green-bg);color:var(--green);border:1px solid #A7F3D0}
+.empty{padding:26px 14px;background:#F7FBFC;border-radius:15px;
+ text-align:center;color:var(--muted);font-size:12px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+ width:min(440px,100%);height:72px;background:white;border-top:1px solid var(--line);
+ display:flex;justify-content:space-around;align-items:center;z-index:8}
+.nav{border:0;background:none;color:#91A7B0;font-size:9px;font-weight:750;
+ display:flex;flex-direction:column;align-items:center;gap:4px;min-width:55px}
+.nav b{font-size:20px;font-weight:500}
+.nav.active{color:var(--deep)}
+.nav.publish b{background:var(--cyan);color:white;border-radius:13px;
+ width:39px;height:39px;display:grid;place-items:center;margin-top:-17px;
+ font-size:25px;box-shadow:0 5px 14px #00a6ce40}
+.toast{display:none;position:fixed;z-index:30;bottom:85px;left:50%;
+ transform:translateX(-50%);background:var(--deep);color:white;
+ padding:12px 18px;border-radius:12px;font-size:12px;width:max-content;max-width:90%}
+hr{border:0;border-top:1px solid var(--line);margin:13px 0}
+.hidden{display:none!important}
+
+/* TABELA DE PISOS DE PREÇOS */
+.price-table-box{background:#F7FBFC;border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px 0;font-size:11px}
+.price-table-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #EAEFEF}
+.price-table-row:last-child{border-bottom:0}
+.price-table-row small{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:1px}
+
+/* CHAT INTERNO */
+.chat-box{background:#F4F9FB;border:1px solid var(--line);border-radius:14px;padding:12px;min-height:240px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.msg{max-width:80%;padding:9px 12px;border-radius:14px;font-size:12px;line-height:1.4}
+.msg.me{align-self:flex-end;background:var(--cyan);color:white;border-bottom-right-radius:4px}
+.msg.other{align-self:flex-start;background:white;border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px}
+.msg small{display:block;font-size:9px;opacity:.75;margin-top:3px}
+
+/* GORJETAS E RECARGA */
+.tip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+.tip-btn{background:white;border:1.5px solid #BCE7F2;color:var(--deep);border-radius:10px;padding:9px 4px;font-size:12px;font-weight:800}
+.tip-btn:hover{background:var(--pale);border-color:var(--cyan)}
+
+/* MODAL / JANELINHA SOBREPOSTA */
+.modal-backdrop{position:fixed;inset:0;background:#18374475;z-index:25;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal-card{background:white;border-radius:20px;padding:20px;width:100%;max-width:390px;box-shadow:0 15px 40px #00000025}
+
+@media(min-width:600px){
+ .app{margin:25px auto;min-height:calc(100vh - 50px);border-radius:25px;overflow:hidden}
+ .bottom{bottom:25px;border-radius:0 0 25px 25px}
+}
+</style>
+</head>
+<body>
+<div class="app" id="appContainer">
+
+<!-- TELA 1: ENTRADA / ESCOLHA DE PERFIL -->
+<section class="page active" id="welcome">
+ <div class="welcome-wrap">
+  <div class="welcome-head">
+   <div class="logo">tem <span>perto.</span></div>
+   <div class="eyebrow">Bem-vindo ao aplicativo</div>
+   <h1>Como você quer usar o Tem Perto hoje?</h1>
+   <p>Escolha a sua opção abaixo para criar sua conta e acessar o ambiente certo para você.</p>
+  </div>
+
+  <button class="role-card" onclick="startOnboarding('cliente')">
+   <div class="role-card-art">
+    <svg viewBox="0 0 170 185">
+     <ellipse cx="85" cy="173" rx="52" ry="7" fill="#CBEBF3"/>
+     <path d="M142 35L145 43L153 46L145 49L142 57L139 49L131 46L139 43Z" fill="#FFC857"/>
+     <path d="M114 102C128 96 138 82 141 68" stroke="#183744" stroke-width="15" stroke-linecap="round"/>
+     <path d="M114 102C128 96 138 82 141 68" stroke="#F8D2BA" stroke-width="10" stroke-linecap="round"/>
+     <circle cx="142" cy="65" r="8" fill="#F8D2BA" stroke="#183744" stroke-width="2.5"/>
+     <path d="M52 102C52 91 66 86 85 86C104 86 118 91 118 102L123 166H47L52 102Z" fill="#00A6CE" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+     <path d="M71 87C75 96 95 96 99 87" fill="#FFFFFF" stroke="#183744" stroke-width="2.5" stroke-linecap="round"/>
+     <rect x="77" y="73" width="16" height="17" rx="6" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+     <rect x="55" y="21" width="60" height="58" rx="28" fill="#F8D2BA" stroke="#183744" stroke-width="3"/>
+     <path d="M53 46C51 23 68 12 88 13C107 14 119 26 117 46C113 35 104 31 94 31C83 31 74 37 64 36C58 36 55 40 53 46Z" fill="#233D4D" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+     <circle cx="72" cy="49" r="3.5" fill="#183744"/><circle cx="98" cy="49" r="3.5" fill="#183744"/>
+     <path d="M78 58Q85 66 92 58" stroke="#183744" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    </svg>
+   </div>
+   <div class="role-card-body">
+    <span class="role-badge">Quero contratar</span>
+    <h2>Sou Cliente</h2>
+    <p>Para você que precisa resolver algo em casa ou no trabalho com rapidez e segurança.</p>
+    <div class="role-examples">Ex.: Preciso de faxina, eletricista, encanador, pintura...</div>
+   </div>
+  </button>
+
+  <button class="role-card" onclick="startOnboarding('profissional')">
+   <div class="role-card-art">
+    <svg viewBox="0 0 170 185">
+     <ellipse cx="85" cy="173" rx="52" ry="7" fill="#CBEBF3"/>
+     <path d="M23 44L26 51L33 54L26 57L23 64L20 57L13 54L20 51Z" fill="#FFC857"/>
+     <path d="M51 102C51 91 66 86 85 86C104 86 119 91 119 102L124 166H46L51 102Z" fill="#007FA3" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+     <path d="M68 87L85 108L102 87Z" fill="#FFFFFF" stroke="#183744" stroke-width="2.5" stroke-linejoin="round"/>
+     <rect x="77" y="73" width="16" height="17" rx="6" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+     <rect x="55" y="23" width="60" height="56" rx="27" fill="#F8D2BA" stroke="#183744" stroke-width="3"/>
+     <path d="M54 36C54 18 68 11 85 11C102 11 116 18 116 36Z" fill="#00A6CE" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+     <path d="M53 35C72 31 105 31 126 37C121 41 96 40 53 35Z" fill="#007FA3" stroke="#183744" stroke-width="2.8" stroke-linejoin="round"/>
+     <circle cx="72" cy="51" r="3.5" fill="#183744"/><circle cx="98" cy="51" r="3.5" fill="#183744"/>
+     <path d="M77 60Q85 68 93 60" stroke="#183744" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    </svg>
+   </div>
+   <div class="role-card-body">
+    <span class="role-badge">Quero trabalhar</span>
+    <h2>Sou Profissional</h2>
+    <p>Para prestadores de serviço que querem encontrar clientes perto de casa e receber via Pix.</p>
+    <div class="role-examples">Ex.: Diarista, eletricista, encanador, pintor, montador...</div>
+   </div>
+  </button>
+
+  <div class="welcome-footer">
+   Plataforma segura com validação OTP, LGPD e repasses automatizados.
+  </div>
+ </div>
+</section>
+
+<!-- TELA 2: CADASTRO DO USUÁRIO (COM LGPD E TERMOS) -->
+<section class="page" id="register">
+ <div style="padding:20px 19px 30px">
+  <button class="link" onclick="showWelcome()">← Voltar para escolha de perfil</button>
+  <div class="eyebrow" style="margin-top:14px" id="regEyebrow">Cadastro de Cliente</div>
+  <h1 id="regTitle">Crie sua conta</h1>
+  <p class="muted" id="regSub">Preencha seus dados corretamente para usar o aplicativo com segurança.</p>
+
+  <form id="registerForm">
+   <div class="photo-picker">
+    <div class="photo-circle" id="photoPreview">📷</div>
+    <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewPhoto(event)">
+    <button type="button" class="photo-btn" onclick="document.getElementById('photoInput').click()">Escolher foto de perfil</button>
+    <small class="muted" style="font-size:10px;margin-top:6px">Uma foto nítida ajuda a gerar confiança</small>
+   </div>
+
+   <div class="form-group">
+    <label>Nome completo *</label>
+    <input id="regName" placeholder="Digite seu nome completo" required>
+   </div>
+
+   <div class="grid-2">
+    <div class="form-group">
+     <label>CPF *</label>
+     <input id="regCpf" placeholder="000.000.000-00" maxlength="14" required>
+    </div>
+    <div class="form-group">
+     <label>Telefone / WhatsApp *</label>
+     <input id="regPhone" placeholder="(81) 99999-9999" required>
+    </div>
+   </div>
+
+   <div class="form-group">
+    <label>Endereço de e-mail *</label>
+    <input type="email" id="regEmail" placeholder="seuemail@exemplo.com" required>
+   </div>
+
+   <hr>
+   <div class="eyebrow" style="margin-bottom:4px">Endereço físico</div>
+
+   <div class="grid-2">
+    <div class="form-group">
+     <label>CEP *</label>
+     <input id="regCep" placeholder="00000-000" required>
+    </div>
+    <div class="form-group">
+     <label>Cidade *</label>
+     <input id="regCity" placeholder="Ex.: Recife" required>
+    </div>
+   </div>
+
+   <div class="form-group">
+    <label>Rua, número e complemento *</label>
+    <input id="regAddress" placeholder="Ex.: Rua das Flores, 120, Apto 201" required>
+   </div>
+
+   <div class="form-group">
+    <label>Bairro *</label>
+    <input id="regNeighborhood" placeholder="Seu bairro" required>
+   </div>
+
+   <div id="proExtraFields" class="hidden">
+    <hr>
+    <div class="eyebrow" style="margin-bottom:6px">Área de atuação e repasse</div>
+    <div class="form-group">
+     <label>Quais serviços você realiza? *</label>
+     <div class="chip-grid">
+      <label class="chip-option"><input type="checkbox" value="Limpeza" checked> Limpeza</label>
+      <label class="chip-option"><input type="checkbox" value="Eletricista"> Eletricista</label>
+      <label class="chip-option"><input type="checkbox" value="Encanador"> Encanador</label>
+      <label class="chip-option"><input type="checkbox" value="Pintura"> Pintura</label>
+      <label class="chip-option"><input type="checkbox" value="Montagem"> Montagem</label>
+      <label class="chip-option"><input type="checkbox" value="Jardinagem"> Jardinagem</label>
+     </div>
+    </div>
+
+    <div class="form-group">
+     <label>Chave Pix para recebimento (mesmo CPF do cadastro) *</label>
+     <input id="regPix" placeholder="Informe sua chave Pix (CPF, e-mail ou celular)">
+    </div>
+
+    <div class="notice warn">
+     <strong>Regra de titularidade bancária:</strong> Os repasses via Pix são enviados exclusivamente para contas vinculadas ao <strong>mesmo CPF</strong> do cadastro.
+    </div>
+   </div>
+
+   <!-- LGPD E TERMOS DE USO OBRIGATÓRIOS -->
+   <div class="form-group" style="margin-top:16px;display:flex;align-items:flex-start;gap:10px">
+    <input type="checkbox" id="lgpdCheck" required style="width:18px;height:18px;margin-top:2px;accent-color:var(--cyan)">
+    <label for="lgpdCheck" style="font-weight:400;font-size:11px;line-height:1.4">
+     Declaro que li e concordo com os <strong>Termos de Uso</strong> e a <strong>Política de Privacidade (LGPD)</strong> da Tem Perto, autorizando o tratamento seguro dos meus dados cadastrais e geolocalização.
+    </label>
+   </div>
+
+   <br>
+   <button class="primary full" type="submit" id="regSubmitBtn">Prosseguir para verificação SMS</button>
+  </form>
+ </div>
+</section>
+
+<!-- TELA 2.1: VALIDAÇÃO DE SEGURANÇA (SMS / OTP) -->
+<section class="page" id="otpVerify">
+ <div class="welcome-wrap" style="text-align:center">
+  <div class="logo">tem <span>perto.</span></div>
+  <div class="eyebrow" style="margin-top:10px">Segurança e Autenticação</div>
+  <h1>Verificação por SMS</h1>
+  <p class="muted">Enviamos um código de confirmação de 4 dígitos para o seu número WhatsApp/Celular cadastrado.</p>
+  
+  <div class="card" style="margin:20px 0">
+   <div class="form-group">
+    <label>Digite o código SMS (Dica: digite qualquer 4 números)</label>
+    <input id="otpCodeInput" placeholder="0 0 0 0" maxlength="4" style="text-align:center;font-size:24px;font-weight:800;letter-spacing:10px" required>
+   </div>
+   <button class="primary full" onclick="validateOtpAndEnter()">Validar e Concluir Acesso</button>
+  </div>
+  <button class="link" onclick="showOnlyScreen('register')">← Voltar e corrigir telefone</button>
+ </div>
+</section>
+
+<!-- CABEÇALHO INTERNO DO APP -->
+<header id="appHeader" class="hidden">
+ <div>
+  <div class="logo">tem <span>perto.</span></div>
+  <div class="location" id="headerLocation">⌖ Pernambuco, Brasil</div>
+ </div>
+ <button class="avatar" id="headAvatar" onclick="go('perfil')">C</button>
+</header>
+
+<main id="appMain" class="hidden">
+<!-- HOME EXCLUSIVA DO CLIENTE -->
+<section class="page" id="home">
+ <div class="hero">
+  <div class="hero-copy">
+   <div class="eyebrow" id="clientGreeting">Olá!</div>
+   <h1>Tem alguém bom<br>por perto.</h1>
+   <p>Encontre profissionais para resolver o que você precisa.</p>
+   <button class="primary" onclick="go('publicar')">Pedir um serviço</button>
+  </div>
+  <div class="hero-art">
+   <svg viewBox="0 0 170 185" aria-label="Cliente feliz acenando">
+    <ellipse cx="85" cy="173" rx="52" ry="7" fill="#CBEBF3"/>
+    <path d="M142 35L145 43L153 46L145 49L142 57L139 49L131 46L139 43Z" fill="#FFC857"/>
+    <path d="M26 52L28 57L33 59L28 61L26 66L24 61L19 59L24 57Z" fill="#00A6CE"/>
+    <path d="M148 92C148 88 154 88 154 92C154 88 160 88 160 92C160 97 154 101 154 101C154 101 148 97 148 92Z" fill="#FF7B7B"/>
+    <path d="M114 102C128 96 138 82 141 68" stroke="#183744" stroke-width="15" stroke-linecap="round"/>
+    <path d="M114 102C128 96 138 82 141 68" stroke="#F8D2BA" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="142" cy="65" r="8" fill="#F8D2BA" stroke="#183744" stroke-width="2.5"/>
+    <path d="M137 59L135 52M141 57L141 50M145 58L147 51" stroke="#183744" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M52 102C52 91 66 86 85 86C104 86 118 91 118 102L123 166H47L52 102Z" fill="#00A6CE" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M71 87C75 96 95 96 99 87" fill="#FFFFFF" stroke="#183744" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M96 112H109" stroke="#007FA3" stroke-width="3" stroke-linecap="round"/>
+    <rect x="77" y="73" width="16" height="17" rx="6" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+    <circle cx="53" cy="53" r="7" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+    <circle cx="117" cy="53" r="7" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+    <rect x="55" y="21" width="60" height="58" rx="28" fill="#F8D2BA" stroke="#183744" stroke-width="3"/>
+    <path d="M53 46C51 23 68 12 88 13C107 14 119 26 117 46C113 35 104 31 94 31C83 31 74 37 64 36C58 36 55 40 53 46Z" fill="#233D4D" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M77 14C81 8 92 8 95 14" fill="#233D4D" stroke="#183744" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M67 41Q72 37 77 41" stroke="#183744" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M93 41Q98 37 103 41" stroke="#183744" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="72" cy="49" r="3.5" fill="#183744"/><circle cx="71" cy="47.8" r="1.2" fill="#FFFFFF"/>
+    <circle cx="98" cy="49" r="3.5" fill="#183744"/><circle cx="97" cy="47.8" r="1.2" fill="#FFFFFF"/>
+    <ellipse cx="66" cy="57" rx="4.5" ry="2.5" fill="#F4978E" opacity="0.7"/>
+    <ellipse cx="104" cy="57" rx="4.5" ry="2.5" fill="#F4978E" opacity="0.7"/>
+    <path d="M78 58Q85 66 92 58" stroke="#183744" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <path d="M54 103C41 112 43 128 58 130" stroke="#183744" stroke-width="15" stroke-linecap="round"/>
+    <path d="M54 103C41 112 43 128 58 130" stroke="#F8D2BA" stroke-width="10" stroke-linecap="round"/>
+    <rect x="55" y="109" width="20" height="32" rx="5" fill="#183744" stroke="#183744" stroke-width="2"/>
+    <rect x="58" y="113" width="14" height="23" rx="2" fill="#E8F9FD"/>
+    <circle cx="65" cy="124" r="3" fill="#00A6CE"/>
+   </svg>
+  </div>
+ </div>
+ <div class="section"><h2>O que você precisa?</h2><button class="link" onclick="go('servicos')">Meus pedidos</button></div>
+ <div class="categories" id="categories"></div>
+ <div class="section"><h2>Como funciona</h2></div>
+ <div class="card">
+  <div class="row"><span class="menu-icon">①</span><div><b style="font-size:12px">Publique seu pedido</b><div class="muted">Serviços de até 4h entre 09h e 17h.</div></div></div>
+  <hr><div class="row"><span class="menu-icon">②</span><div><b style="font-size:12px">Chat exclusivo no dia</b><div class="muted">Abre às 08h do dia do atendimento.</div></div></div>
+  <hr><div class="row"><span class="menu-icon">③</span><div><b style="font-size:12px">Estorno automático garantido</b><div class="muted">Se houver desistência, o valor retorna para sua carteira.</div></div></div>
+ </div>
+ <div class="section"><h2>Seus pedidos recentes</h2></div>
+ <div id="clientRecent"></div>
+</section>
+
+<!-- HOME EXCLUSIVA DO PROFISSIONAL -->
+<section class="page" id="prohome">
+ <div class="hero">
+  <div class="hero-copy">
+   <div class="eyebrow" id="proGreeting">Área do Profissional</div>
+   <h1>Seu trabalho<br>tem valor.</h1>
+   <p>Veja ofertas na sua região e aceite os serviços que desejar.</p>
+   <button class="primary" onclick="go('servicos')">Meus serviços aceitos</button>
+  </div>
+  <div class="hero-art">
+   <svg viewBox="0 0 170 185" aria-label="Profissional sorridente com boné e ferramenta">
+    <ellipse cx="85" cy="173" rx="52" ry="7" fill="#CBEBF3"/>
+    <path d="M23 44L26 51L33 54L26 57L23 64L20 57L13 54L20 51Z" fill="#FFC857"/>
+    <path d="M148 76C148 72 154 72 154 76C154 72 160 72 160 76C160 81 154 85 154 85C154 85 148 81 148 76Z" fill="#FF7B7B"/>
+    <g transform="translate(122, 92) rotate(18)">
+     <rect x="7" y="14" width="8" height="36" rx="4" fill="#B8D4DE" stroke="#183744" stroke-width="2.5"/>
+     <path d="M3 14C1 7 6 1 11 1C16 1 21 7 19 14L15 14L15 8L7 8L7 14Z" fill="#B8D4DE" stroke="#183744" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+    <path d="M115 103C129 109 134 121 128 131" stroke="#183744" stroke-width="15" stroke-linecap="round"/>
+    <path d="M115 103C129 109 134 121 128 131" stroke="#F8D2BA" stroke-width="10" stroke-linecap="round"/>
+    <path d="M51 102C51 91 66 86 85 86C104 86 119 91 119 102L124 166H46L51 102Z" fill="#007FA3" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M68 87L85 108L102 87Z" fill="#FFFFFF" stroke="#183744" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M65 90V122M105 90V122" stroke="#183744" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="65" cy="116" r="2.5" fill="#FFC857"/><circle cx="105" cy="116" r="2.5" fill="#FFC857"/>
+    <rect x="71" y="122" width="28" height="22" rx="5" fill="#00A6CE" stroke="#183744" stroke-width="2.5"/>
+    <rect x="77" y="73" width="16" height="17" rx="6" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+    <circle cx="53" cy="54" r="7" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+    <circle cx="117" cy="54" r="7" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+    <rect x="55" y="23" width="60" height="56" rx="27" fill="#F8D2BA" stroke="#183744" stroke-width="3"/>
+    <path d="M54 36C54 18 68 11 85 11C102 11 116 18 116 36Z" fill="#00A6CE" stroke="#183744" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M53 35C72 31 105 31 126 37C121 41 96 40 53 35Z" fill="#007FA3" stroke="#183744" stroke-width="2.8" stroke-linejoin="round"/>
+    <circle cx="85" cy="10" r="3" fill="#183744"/>
+    <path d="M67 43Q72 39 77 43" stroke="#183744" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M93 43Q98 39 103 43" stroke="#183744" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="72" cy="51" r="3.5" fill="#183744"/><circle cx="71" cy="49.8" r="1.2" fill="#FFFFFF"/>
+    <circle cx="98" cy="51" r="3.5" fill="#183744"/><circle cx="97" cy="49.8" r="1.2" fill="#FFFFFF"/>
+    <ellipse cx="66" cy="59" rx="4.5" ry="2.5" fill="#F4978E" opacity="0.7"/>
+    <ellipse cx="104" cy="59" rx="4.5" ry="2.5" fill="#F4978E" opacity="0.7"/>
+    <path d="M77 60Q85 68 93 60" stroke="#183744" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <path d="M53 103C38 110 34 123 42 131" stroke="#183744" stroke-width="15" stroke-linecap="round"/>
+    <path d="M53 103C38 110 34 123 42 131" stroke="#F8D2BA" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="44" cy="131" r="7.5" fill="#F8D2BA" stroke="#183744" stroke-width="2.5"/>
+    <path d="M44 124V116" stroke="#183744" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M44 124V116" stroke="#F8D2BA" stroke-width="2" stroke-linecap="round"/>
+   </svg>
+  </div>
+ </div>
+
+ <!-- NOTIFICAÇÕES DE GORJETAS RECEBIDAS -->
+ <div id="proTipsNotificationArea" style="margin-top:12px"></div>
+
+ <div class="card" style="margin-top:12px" id="proHomeCredCard"></div>
+
+ <div class="stats">
+  <div class="stat"><strong id="proStatWeek">0/5</strong><small>Meta Semanal</small></div>
+  <div class="stat"><strong id="proStatDone">00</strong><small>Total Concluídos</small></div>
+  <div class="stat"><strong id="proStatScore">Novato</strong><small>Credibilidade</small></div>
+ </div>
+ <div class="section"><h2>Ofertas perto de você</h2><button class="link" onclick="go('servicos')">Meus serviços</button></div>
+ <div id="proOffers"></div>
+</section>
+
+<!-- SERVIÇOS -->
+<section class="page" id="servicos">
+ <div class="eyebrow">Acompanhamento</div><h1 id="serviceTitle">Meus pedidos</h1>
+ <p class="muted" id="serviceSub">Acompanhe seus pedidos.</p>
+ <div id="serviceContent"></div>
+</section>
+
+<!-- PUBLICAR -->
+<section class="page" id="publicar">
+ <div class="eyebrow">Novo pedido</div><h1>O que você precisa?</h1>
+ <p class="muted">Os valores abaixo representam o <strong>Piso da Categoria</strong> (blocos de até 4 horas trabalhadas). Você pode pagar o piso ou oferecer mais.</p>
+
+ <div class="price-table-box">
+  <div class="between" style="margin-bottom:6px"><b>Piso da Categoria</b><span class="pill">Até 4h de serviço</span></div>
+  <div class="price-table-row">
+   <div><span>🧹 Limpeza</span><small>Diária de até 4 horas trabalhadas</small></div>
+   <strong>R$ 126,00</strong>
+  </div>
+  <div class="price-table-row">
+   <div><span>🔧 Eletricista</span><small>Atendimento/reparo de até 4 horas</small></div>
+   <strong>R$ 94,50</strong>
+  </div>
+  <div class="price-table-row">
+   <div><span>🚿 Encanador</span><small>Serviço/reparo de até 4 horas</small></div>
+   <strong>R$ 105,00</strong>
+  </div>
+  <div class="price-table-row">
+   <div><span>🖌️ Pintura</span><small>Bloco de pintura/preparo de até 4 horas</small></div>
+   <strong>R$ 147,00</strong>
+  </div>
+  <div class="price-table-row">
+   <div><span>🪛 Montagem</span><small>Montagem de móveis de até 4 horas</small></div>
+   <strong>R$ 105,00</strong>
+  </div>
+  <div class="price-table-row">
+   <div><span>🌱 Jardinagem</span><small>Manutenção e limpeza de até 4 horas</small></div>
+   <strong>R$ 115,50</strong>
+  </div>
+ </div>
+
+ <form id="requestForm">
+  <div class="form-group"><label>Categoria *</label>
+   <select id="categoryInput" required onchange="updateMinPriceHint()">
+    <option value="">Selecione</option>
+    <option value="Limpeza">Limpeza (Piso R$ 126,00 · até 4h)</option>
+    <option value="Eletricista">Eletricista (Piso R$ 94,50 · até 4h)</option>
+    <option value="Encanador">Encanador (Piso R$ 105,00 · até 4h)</option>
+    <option value="Pintura">Pintura (Piso R$ 147,00 · até 4h)</option>
+    <option value="Montagem">Montagem (Piso R$ 105,00 · até 4h)</option>
+    <option value="Jardinagem">Jardinagem (Piso R$ 115,50 · até 4h)</option>
+   </select>
+  </div>
+  <div class="form-group"><label>Descrição do serviço (o que resolver dentro de até 4h) *</label><textarea id="description" placeholder="Descreva detalhadamente o que precisa ser feito..." required></textarea></div>
+  <div class="grid-2">
+   <div class="form-group"><label>CEP *</label><input id="cep" placeholder="00000-000" required></div>
+   <div class="form-group"><label>Cidade *</label><input id="city" placeholder="Sua cidade" required></div>
+  </div>
+  <div class="form-group"><label>Endereço completo (Rua e número) *</label><input id="address" placeholder="Ex.: Rua Principal, 100" required></div>
+  <div class="form-group"><label>Bairro *</label><input id="neighborhood" required placeholder="Seu bairro"></div>
+  
+  <div class="grid-2">
+   <div class="form-group"><label>Data do serviço *</label><input type="date" id="date" required></div>
+   <div class="form-group"><label>Horário (09:00 às 17:00) *</label><input type="time" id="time" min="09:00" max="17:00" required></div>
+  </div>
+  <small class="muted" style="display:block;margin-top:-6px;margin-bottom:10px">Atendimentos permitidos exclusivamente entre 09:00 e 17:00.</small>
+
+  <div class="form-group">
+   <label id="priceLabel">Valor que você deseja pagar (R$) *</label>
+   <input type="number" id="grossPrice" min="1" step=".01" placeholder="Ex.: 150,00" required>
+   <small class="muted" id="priceHint">Você pode pagar o piso da categoria ou um valor maior.</small>
+  </div>
+
+  <div class="card" style="background:var(--pale);border:0">
+   <b style="font-size:12px">Resumo do pagamento</b>
+   <div class="between" style="margin-top:12px"><span class="muted">Valor do serviço</span><b id="customerTotal">R$ 0,00</b></div>
+   <div class="muted" style="margin-top:6px">Seu saldo na carteira: <strong id="formWalletPreview">R$ 0,00</strong></div>
+  </div>
+  <br><button class="primary full" type="submit">Continuar para pagamento</button>
+ </form>
+</section>
+
+<!-- PAGAMENTO -->
+<section class="page" id="pagamento">
+ <div class="eyebrow">Pagamento seguro</div><h1>Confirme seu pagamento</h1>
+ <p class="muted">Escolha pagar com saldo da carteira ou via Pix/Cartão.</p>
+ <div class="card">
+  <div class="muted">Valor total a pagar</div>
+  <div class="price" id="paymentAmount" style="font-size:30px;margin:10px 0">R$ 150,00</div>
+  <div class="notice">O valor ficará protegido até a conclusão do serviço pelo profissional. Em caso de desistência, há estorno automático.</div>
+  <div class="form-group"><label>Forma de pagamento</label>
+   <select id="paymentMethod">
+    <option value="wallet">Saldo da minha carteira Tem Perto</option>
+    <option value="pix">PIX direto</option>
+    <option value="card">Cartão de crédito</option>
+   </select>
+  </div>
+  <button class="primary full" onclick="confirmPayment()">Confirmar pagamento</button>
+  <button class="secondary full" style="margin-top:9px" onclick="go('publicar')">Voltar</button>
+ </div>
+</section>
+
+<!-- CARTEIRA -->
+<section class="page" id="carteira">
+ <div class="eyebrow">Financeiro</div><h1 id="walletHeading">Minha carteira</h1>
+ <p class="muted" id="walletSub">Acompanhe seus valores.</p>
+ <div class="card" style="background:var(--pale);border:0">
+  <div class="muted" id="walletLabel">Saldo disponível</div>
+  <div class="price" style="font-size:30px;margin:9px 0" id="availableBalance">R$ 0,00</div>
+  <div class="muted" id="walletCpfNote">Conta vinculada ao CPF do titular.</div>
+ </div>
+
+ <div id="clientTopupCard" class="card hidden">
+  <div class="between"><b style="font-size:13px">Adicionar dinheiro na carteira</b><span class="pill">Pix Instantâneo</span></div>
+  <p class="muted" style="font-size:11px;margin:6px 0 10px">Adicione saldo para contratar serviços e enviar gorjetas com 1 clique.</p>
+  <div class="tip-grid">
+   <button type="button" class="tip-btn" onclick="addClientFunds(50)">+ R$ 50</button>
+   <button type="button" class="tip-btn" onclick="addClientFunds(100)">+ R$ 100</button>
+   <button type="button" class="tip-btn" onclick="addClientFunds(150)">+ R$ 150</button>
+   <button type="button" class="tip-btn" onclick="addClientFunds(200)">+ R$ 200</button>
+  </div>
+  <div class="row" style="margin-top:8px">
+   <input type="number" id="customTopupInput" placeholder="Outro valor (R$)" min="5" step="1" style="flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px">
+   <button type="button" class="primary" onclick="addCustomClientFunds()">Depositar</button>
+  </div>
+ </div>
+
+ <div id="proBankCard" class="card hidden">
+  <div class="between"><b style="font-size:12px">Dados de recebimento (Pix)</b><span class="pill">Mesmo CPF</span></div>
+  <div class="meta" style="margin-top:8px" id="proBankInfo">Titular: -<br>CPF: -<br>Chave Pix: -</div>
+ </div>
+ <div class="section"><h2 id="pendingTitle">Valores pendentes</h2></div>
+ <div id="pendingBalance" class="card"><div class="muted">Nenhum valor pendente.</div></div>
+ <div class="section"><h2>Histórico</h2></div>
+ <div id="walletHistory" class="empty">Nenhuma movimentação por enquanto.</div>
+</section>
+
+<!-- PERFIL -->
+<section class="page" id="perfil">
+ <div class="eyebrow">Minha conta</div><h1 id="profileHeading">Meu perfil</h1>
+ <div class="profile-hero">
+  <div class="profile-avatar" id="profileAvatar">C</div>
+  <h2 id="profileName">Usuário</h2>
+  <div class="muted" id="profileRole">Cliente Tem Perto</div>
+  <div id="profileCredBadgeWrap" style="margin-top:8px"></div>
+  <div class="muted" id="profileLocationMeta" style="font-size:11px;margin-top:6px"></div>
+  <div class="stats" id="profileStats"></div>
+ </div>
+
+ <div id="proCredSection" class="hidden">
+  <div class="section"><h2>Minha Credibilidade & Meta Semanal</h2></div>
+  <div class="card" id="proCredDetailCard"></div>
+
+  <div class="section"><h2>Avaliações recebidas</h2></div>
+  <div id="proOwnReviewsList"></div>
+
+  <div class="section"><h2>Como funciona a pontuação</h2></div>
+  <div class="card">
+   <div class="rule-box"><strong>🎯 Meta Semanal (Mínimo de 5):</strong> Conclua pelo menos 5 serviços por semana para manter o fluxo contínuo de ofertas.</div>
+   <div class="rule-box"><strong>🌱 Início (Novato — 0 a 4 serviços):</strong> Conclua 5 trabalhos sem desistência para liberar a nota 9.5.</div>
+   <div class="rule-box green"><strong>🟢 Credibilidade Ótima (9.5):</strong> Prioridade nas ofertas da região.</div>
+   <div class="rule-box orange"><strong>🟠 Alerta Laranja (6.5):</strong> 3 desistências reduzem a nota. Recupere com 10 serviços seguidos.</div>
+   <div class="rule-box red" style="margin-bottom:0"><strong>🔴 Bloqueio Vermelho (3.0):</strong> Desistências excessivas suspendem a conta por 15 dias.</div>
+  </div>
+ </div>
+
+ <div class="section"><h2>Dados cadastrados</h2></div>
+ <div class="card" id="profileDataCard"></div>
+ <div class="section"><h2>Opções da conta</h2></div>
+ <div id="profileMenu"></div>
+ <button class="danger-btn full" onclick="logoutToWelcome()">Sair / Trocar tipo de perfil</button>
+</section>
+
+<!-- PERFIL PÚBLICO DO PROFISSIONAL -->
+<section class="page" id="proPublicProfile">
+ <button class="link" onclick="go('servicos')">← Voltar para meus pedidos</button>
+ <div class="eyebrow" style="margin-top:10px">Perfil do Prestador</div>
+ <h1>Profissional Designado</h1>
+ <div class="profile-hero" id="publicProHero"></div>
+ <div class="notice" style="margin-top:12px">
+  Para garantir transparência e agilidade, a plataforma gerencia automaticamente a disponibilidade e pontuação dos profissionais credenciados.
+ </div>
+ <div class="section"><h2>Avaliações e Comentários</h2></div>
+ <div id="publicProReviews"></div>
+ <div class="card" style="margin-top:14px">
+  <b style="font-size:13px">Escrever comentário no perfil do profissional</b>
+  <p class="muted" style="font-size:11px;margin:4px 0 8px">Seu comentário ficará registrado no perfil público deste profissional.</p>
+  <textarea id="newReviewText" placeholder="Conte como foi o atendimento..." style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;min-height:70px"></textarea>
+  <button class="primary full" style="margin-top:8px" onclick="submitProReview()">Publicar avaliação</button>
+ </div>
+</section>
+
+<!-- CHAT EXCLUSIVO -->
+<section class="page" id="chatPage">
+ <button class="link" onclick="go('servicos')">← Voltar</button>
+ <div class="eyebrow" style="margin-top:10px">Canal Seguro Tem Perto</div>
+ <h1 id="chatHeaderTitle">Chat do Serviço</h1>
+ <p class="muted" id="chatHeaderSub">Disponível no dia do serviço a partir das 08:00 até o encerramento.</p>
+ <div class="chat-box" id="chatMessagesBox"></div>
+ <div id="chatInputArea" class="row">
+  <input id="chatMsgInput" placeholder="Digite sua mensagem..." style="flex:1;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px">
+  <button class="primary" onclick="sendChatMessage()">Enviar</button>
+ </div>
+ <div id="chatClosedNotice" class="notice warn hidden">
+  Este chat foi encerrado automaticamente após a conclusão do serviço.
+ </div>
+</section>
+
+<section class="page" id="editar">
+ <button class="link" onclick="go('perfil')">← Voltar</button>
+ <div class="eyebrow" style="margin-top:10px">Minha conta</div><h1>Editar perfil</h1>
+ <div class="form-group"><label>Nome completo</label><input id="editName"></div>
+ <div class="form-group"><label>Telefone</label><input id="editPhone"></div>
+ <div class="form-group"><label>E-mail</label><input type="email" id="editEmail"></div>
+ <div class="form-group"><label>Endereço</label><input id="editAddress"></div>
+ <div class="form-group"><label>Cidade</label><input id="editCity"></div>
+ <button class="primary full" onclick="saveProfile()">Salvar alterações</button>
+</section>
+</main>
+
+<!-- JANELINHA DE GORJETA -->
+<div id="tipModal" class="modal-backdrop hidden">
+ <div class="modal-card">
+  <div class="eyebrow">Serviço Concluído!</div>
+  <h2 style="margin:6px 0" id="tipModalTitle">Enviar gorjeta</h2>
+  <p class="muted" id="tipModalDesc" style="font-size:12px">
+   Você tem até <strong>30 minutos</strong> após o encerramento para enviar uma gorjeta diretamente para o Pix de <strong id="tipProNameDisplay">Profissional</strong>.
+  </p>
+  <div class="tip-grid">
+   <button type="button" class="tip-btn" onclick="sendTip(5)">R$ 5</button>
+   <button type="button" class="tip-btn" onclick="sendTip(10)">R$ 10</button>
+   <button type="button" class="tip-btn" onclick="sendTip(20)">R$ 20</button>
+   <button type="button" class="tip-btn" onclick="sendTip(50)">R$ 50</button>
+  </div>
+  <div class="form-group" style="margin-top:10px">
+   <label>Outro valor (R$)</label>
+   <div class="row">
+    <input type="number" id="customTipInput" placeholder="Ex.: 15,00" min="1" step="0.50">
+    <button type="button" class="primary" onclick="sendCustomTip()">Enviar</button>
+   </div>
+  </div>
+  <button type="button" class="secondary full" style="margin-top:8px" onclick="closeTipModal()">Agora não</button>
+ </div>
+</div>
+
+<nav class="bottom hidden" id="appBottomNav">
+ <button class="nav active" data-page="home" onclick="go('home')"><b>⌂</b>Início</button>
+ <button class="nav" data-page="servicos" onclick="go('servicos')"><b id="navServicesIcon">▤</b><span id="navServicesLabel">Pedidos</span></button>
+ <button class="nav publish" id="navPublishBtn" data-page="publicar" onclick="go('publicar')"><b>＋</b>Publicar</button>
+ <button class="nav" data-page="carteira" onclick="go('carteira')"><b>▱</b>Carteira</button>
+ <button class="nav" data-page="perfil" onclick="go('perfil')"><b>◉</b>Perfil</button>
+</nav>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+let role = null;
+let user = { name: '', cpf: '', phone: '', email: '', cep: '', address: '', neighborhood: '', city: '', photo: '', pix: '', skills: [] };
+
+let cred = { completedPixJobs: 0, weeklyCompleted: 0, cancellationsAfterAccept: 0, status: 'new', score: null, recoveryStreak: 0, suspendedDays: 0 };
+let requests = [];
+let accepted = [];
+let clientWalletBalance = 0;
+let proEarnedBalance = 0;
+let currentDraft = null;
+let activeChatOrderId = null;
+let activeTipOrderId = null;
+
+let assignedProDemo = {
+ name: 'Carlos Eduardo Silva',
+ role: 'Profissional Verificado',
+ score: '9.5',
+ skills: ['Limpeza', 'Eletricista', 'Encanador', 'Pintura', 'Montagem', 'Jardinagem'],
+ reviews: [
+  { author: 'Mariana Costa', text: 'Excelente trabalho, muito pontual e caprichoso!', date: '15/11/2026' }
+ ]
+};
+
+let proReceivedTips = [];
+
+const minPrices = {
+ 'Limpeza': 126.00,
+ 'Eletricista': 94.50,
+ 'Encanador': 105.00,
+ 'Pintura': 147.00,
+ 'Montagem': 105.00,
+ 'Jardinagem': 115.50
+};
+
+const money = v => 'R$ ' + Number(v).toFixed(2).replace('.', ',');
+const categories = [['Limpeza','🧹'],['Eletricista','🔧'],['Encanador','🚿'],['Pintura','🖌️'],['Montagem','🪛'],['Jardinagem','🌱']];
+
+function getCredInfo() {
+ if (cred.status === 'red') return { badgeClass: 'cred-red', shortLabel: '3.0 · Bloqueado', title: 'Credibilidade 3.0 — Conta Suspensa (15 dias)', desc: 'Desistências excessivas. Novas ofertas suspensas por 15 dias.' };
+ if (cred.status === 'orange') return { badgeClass: 'cred-orange', shortLabel: '6.5 · Atenção', title: `Credibilidade 6.5 — Recuperação (${cred.recoveryStreak}/10)`, desc: `Conclua mais ${10 - cred.recoveryStreak} trabalhos seguidos sem desistir para voltar à nota 9.5!` };
+ if (cred.status === 'green') {
+  const metaOk = cred.weeklyCompleted >= 5;
+  return { badgeClass: metaOk ? 'cred-green' : 'cred-orange', shortLabel: `${cred.score.toFixed(1)} · ${metaOk ? 'Fluxo Ativo' : 'Meta Semanal'}`, title: `Credibilidade ${cred.score.toFixed(1)} — ${metaOk ? 'Fluxo Contínuo Ativo!' : 'Atenção à Meta Semanal'}`, desc: metaOk ? `Meta semanal atingida (${cred.weeklyCompleted}/5 serviços). Recebimentos via Pix garantidos!` : `Concluídos ${cred.weeklyCompleted}/5 serviços. Conclua mais ${5 - cred.weeklyCompleted} para garantir fluxo contínuo.` };
+ }
+ const faltam = Math.max(0, 5 - cred.completedPixJobs);
+ return { badgeClass: 'cred-new', shortLabel: `Novato (${cred.completedPixJobs}/5)`, title: `Perfil Novato — Em construção (${cred.completedPixJobs} de 5)`, desc: `Conclua mais ${faltam} trabalho(s) com Pix sem desistências para liberar nota 9.5.` };
+}
+
+function registerCompletedJobWithPix() {
+ cred.completedPixJobs++; cred.weeklyCompleted++;
+ if (cred.status === 'new') {
+  if (cred.completedPixJobs >= 5 && cred.cancellationsAfterAccept === 0) { cred.status = 'green'; cred.score = 9.5; showToast('🎉 5 serviços concluídos! Credibilidade 9.5 conquistada!'); }
+ } else if (cred.status === 'orange') {
+  cred.recoveryStreak++;
+  if (cred.recoveryStreak >= 10) { cred.status = 'green'; cred.score = 9.5; cred.recoveryStreak = 0; showToast('🟢 Credibilidade recuperada para 9.5!'); }
+  else { cred.score = Number((6.5 + (cred.recoveryStreak * 0.3)).toFixed(1)); }
+ }
+}
+
+function registerAcceptedJobCancellation() {
+ cred.cancellationsAfterAccept++; cred.recoveryStreak = 0;
+ if (cred.status === 'red') return;
+ if (cred.status === 'orange') { cred.status = 'red'; cred.score = 3.0; cred.suspendedDays = 15; showToast('🔴 Credibilidade 3.0! Conta suspensa por 15 dias.'); }
+ else if (cred.cancellationsAfterAccept >= 3) { cred.status = 'orange'; cred.score = 6.5; showToast('🟠 3 desistências. Credibilidade caiu para 6.5.'); }
+ else { showToast(`⚠️ Desistência registrada (${cred.cancellationsAfterAccept}/3).`); }
+}
+
+function startOnboarding(selectedRole) {
+ role = selectedRole;
+ const isPro = role === 'profissional';
+ document.getElementById('regEyebrow').textContent = isPro ? 'Cadastro de Profissional' : 'Cadastro de Cliente';
+ document.getElementById('regTitle').textContent = isPro ? 'Cadastre-se para trabalhar' : 'Crie sua conta de cliente';
+ document.getElementById('proExtraFields').classList.toggle('hidden', !isPro);
+ document.getElementById('regPix').required = isPro;
+ showOnlyScreen('register');
+ window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function showWelcome() { showOnlyScreen('welcome'); }
+function showOnlyScreen(screenId) {
+ document.getElementById('appHeader').classList.add('hidden');
+ document.getElementById('appMain').classList.add('hidden');
+ document.getElementById('appBottomNav').classList.add('hidden');
+ document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+ document.getElementById(screenId).classList.add('active');
+}
+
+function previewPhoto(event) {
+ const file = event.target.files[0];
+ if (!file) return;
+ const reader = new FileReader();
+ reader.onload = e => { user.photo = e.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${user.photo}" alt="Avatar">`; };
+ reader.readAsDataURL(file);
+}
+
+document.getElementById('regCpf').addEventListener('input', e => {
+ let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+ v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+ e.target.value = v;
+});
+
+/* FLUXO DE CADASTRO COM VALIDAÇÃO LGPD E DISPARO DE OTP (SMS) */
+document.getElementById('registerForm').addEventListener('submit', e => {
+ e.preventDefault();
+ const isPro = role === 'profissional';
+ const selectedSkills = Array.from(document.querySelectorAll('#proExtraFields input[type="checkbox"]:checked')).map(cb => cb.value);
+ if (isPro && selectedSkills.length === 0) { showToast('Selecione pelo menos uma categoria.'); return; }
+ if (!document.getElementById('lgpdCheck').checked) { showToast('Você precisa aceitar os Termos e a Política de Privacidade (LGPD).'); return; }
+
+ user.name = document.getElementById('regName').value.trim();
+ user.cpf = document.getElementById('regCpf').value.trim();
+ user.phone = document.getElementById('regPhone').value.trim();
+ user.email = document.getElementById('regEmail').value.trim();
+ user.cep = document.getElementById('regCep').value.trim();
+ user.city = document.getElementById('regCity').value.trim();
+ user.address = document.getElementById('regAddress').value.trim();
+ user.neighborhood = document.getElementById('regNeighborhood').value.trim();
+ user.pix = isPro ? document.getElementById('regPix').value.trim() : '';
+ user.skills = isPro ? selectedSkills : [];
+
+ // Vai para tela de validação SMS (OTP)
+ showOnlyScreen('otpVerify');
+ showToast('📲 Código de confirmação enviado via SMS para ' + user.phone);
+});
+
+function validateOtpAndEnter() {
+ const otp = document.getElementById('otpCodeInput').value.trim();
+ if (otp.length < 4) { showToast('Digite o código SMS de 4 dígitos.'); return; }
+ enterApp();
+}
+
+function enterApp() {
+ const isPro = role === 'profissional';
+ document.getElementById('otpVerify').classList.remove('active');
+ document.getElementById('appHeader').classList.remove('hidden');
+ document.getElementById('appMain').classList.remove('hidden');
+ document.getElementById('appBottomNav').classList.remove('hidden');
+ document.getElementById('navPublishBtn').classList.toggle('hidden', isPro);
+ document.getElementById('navServicesLabel').textContent = isPro ? 'Serviços' : 'Pedidos';
+
+ const firstName = user.name.split(' ')[0] || 'Usuário';
+ document.getElementById('headerLocation').textContent = `⌖ ${user.neighborhood}, ${user.city}`;
+ document.getElementById('clientGreeting').textContent = `Olá, ${firstName}!`;
+ document.getElementById('proGreeting').textContent = `Olá, ${firstName} · Profissional`;
+
+ if (!isPro) {
+  document.getElementById('cep').value = user.cep;
+  document.getElementById('address').value = user.address;
+  document.getElementById('neighborhood').value = user.neighborhood;
+  document.getElementById('city').value = user.city;
+ }
+
+ updateAvatarUI(); renderCategories(); renderProfile(); renderProOffers(); renderRecent(); renderWallet();
+ go('home');
+ showToast(isPro ? 'Bem-vindo(a) à área do Profissional!' : 'Cadastro verificado com sucesso!');
+}
+
+function updateAvatarUI() {
+ const initial = (user.name[0] || 'U').toUpperCase();
+ const headAv = document.getElementById('headAvatar'), profAv = document.getElementById('profileAvatar');
+ if (user.photo) { headAv.innerHTML = `<img src="${user.photo}" alt="Avatar">`; profAv.innerHTML = `<img src="${user.photo}" alt="Avatar">`; }
+ else { headAv.textContent = initial; profAv.textContent = initial; }
+}
+
+function logoutToWelcome() { role = null; showOnlyScreen('welcome'); window.scrollTo({top: 0, behavior: 'smooth'}); }
+
+function person(i){
+ const configs = [
+  { shirt: '#00A6CE', hairBack: `<circle cx="75" cy="14" r="10" fill="#233D4D" stroke="#183744" stroke-width="2.6"/>`, hairFront: `<path d="M51 44C50 24 63 16 75 16C87 16 100 24 99 44C94 33 85 30 75 30C65 30 56 33 51 44Z" fill="#233D4D" stroke="#183744" stroke-width="2.6"/>`, accessory: `<rect x="108" y="68" width="16" height="22" rx="5" fill="#E8F9FD" stroke="#183744" stroke-width="2.4"/><path d="M111 68V61H124L127 65H111" fill="#007FA3" stroke="#183744" stroke-width="2.2" stroke-linejoin="round"/><path d="M131 59L136 56M132 63L138 63M131 67L136 70" stroke="#00A6CE" stroke-width="2.2" stroke-linecap="round"/><path d="M22 30L24 35L29 37L24 39L22 44L20 39L15 37L20 35Z" fill="#FFC857"/>` },
+  { shirt: '#007FA3', hairBack: ``, hairFront: `<path d="M50 36C50 20 62 14 75 14C88 14 100 20 100 36Z" fill="#FFC857" stroke="#183744" stroke-width="2.6"/><path d="M50 35C68 32 92 32 108 37C102 40 78 39 50 35Z" fill="#E0A82E" stroke="#183744" stroke-width="2.4"/>`, accessory: `<path d="M112 90L124 66" stroke="#183744" stroke-width="6" stroke-linecap="round"/><path d="M112 90L124 66" stroke="#FFC857" stroke-width="2.5" stroke-linecap="round"/><path d="M122 65L120 56M126 66L132 59" stroke="#183744" stroke-width="3" stroke-linecap="round"/><path d="M25 56L31 46H26L30 37L21 48H26Z" fill="#FFC857" stroke="#183744" stroke-width="1.5" stroke-linejoin="round"/>` },
+  { shirt: '#00A6CE', hairBack: ``, hairFront: `<path d="M50 36C50 20 62 14 75 14C88 14 100 20 100 36Z" fill="#007FA3" stroke="#183744" stroke-width="2.6"/><path d="M42 37C58 32 82 32 100 35C72 39 48 40 42 37Z" fill="#183744" stroke="#183744" stroke-width="2.2"/>`, accessory: `<path d="M113 89L125 65" stroke="#183744" stroke-width="6.5" stroke-linecap="round"/><path d="M113 89L125 65" stroke="#B8D4DE" stroke-width="2.5" stroke-linecap="round"/><circle cx="127" cy="61" r="6" fill="#B8D4DE" stroke="#183744" stroke-width="2.4"/><path d="M127 56L131 60" stroke="#FFFFFF" stroke-width="3"/><path d="M25 46C25 46 19 54 19 58C19 61.3 21.7 64 25 64C28.3 64 31 61.3 31 58C31 54 25 46 25 46Z" fill="#00A6CE" stroke="#183744" stroke-width="2"/>` },
+  { shirt: '#007FA3', hairBack: `<path d="M49 44C47 62 52 72 58 74M101 44C103 62 98 72 92 74" stroke="#233D4D" stroke-width="8" stroke-linecap="round"/>`, hairFront: `<path d="M51 42C51 22 63 15 75 15C87 15 99 22 99 42C91 33 59 33 51 42Z" fill="#233D4D" stroke="#183744" stroke-width="2.6"/><path d="M52 33C64 27 86 27 98 33" stroke="#FF7B7B" stroke-width="5" stroke-linecap="round"/>`, accessory: `<path d="M113 91V74H123V64" fill="none" stroke="#183744" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="112" y="54" width="22" height="10" rx="4" fill="#FFC857" stroke="#183744" stroke-width="2.4"/><path d="M22 34L24 39L29 41L24 43L22 48L20 43L15 41L20 39Z" fill="#00A6CE"/>` },
+  { shirt: '#00A6CE', hairBack: ``, hairFront: `<path d="M51 43C50 22 63 14 76 14C89 14 100 22 99 43C93 32 82 32 74 34C64 36 56 36 51 43Z" fill="#233D4D" stroke="#183744" stroke-width="2.6"/><path d="M71 14L75 8L80 14" fill="#233D4D" stroke="#183744" stroke-width="2.2" stroke-linejoin="round"/>`, accessory: `<rect x="105" y="72" width="24" height="19" rx="4" fill="#E3B382" stroke="#183744" stroke-width="2.4"/><path d="M105 80H129M117 72V91" stroke="#183744" stroke-width="2"/><path d="M23 36L25 41L30 43L25 45L23 50L21 45L16 43L21 41Z" fill="#FFC857"/>` },
+  { shirt: '#007FA3', hairBack: `<circle cx="48" cy="60" r="7" fill="#233D4D" stroke="#183744" stroke-width="2.4"/><circle cx="102" cy="60" r="7" fill="#233D4D" stroke="#183744" stroke-width="2.4"/>`, hairFront: `<ellipse cx="75" cy="31" rx="34" ry="7" fill="#F4D58D" stroke="#183744" stroke-width="2.5"/><path d="M54 30C55 16 64 12 75 12C86 12 95 16 96 30Z" fill="#F4D58D" stroke="#183744" stroke-width="2.5"/><path d="M55 27H95" stroke="#00A6CE" stroke-width="3.5"/>`, accessory: `<path d="M110 77H128L125 92H113Z" fill="#E07A5F" stroke="#183744" stroke-width="2.3" stroke-linejoin="round"/><path d="M119 77V66M119 71C113 71 111 65 116 63C118 62 119 66 119 71ZM119 69C125 69 127 63 122 61C120 60 119 64 119 69Z" fill="#52B788" stroke="#183744" stroke-width="2" stroke-linejoin="round"/><path d="M24 48C24 45 28 45 28 48C28 45 32 45 32 48C32 52 28 55 28 55C28 55 24 52 24 48Z" fill="#FF7B7B"/>` }
+ ];
+ const c = configs[i];
+ return `<svg viewBox="0 0 150 128" role="img" aria-label="Profissional de ${categories[i][0]}">
+  <ellipse cx="75" cy="119" rx="44" ry="5.5" fill="#DDF4F9"/>
+  ${c.hairBack}
+  <path d="M44 82C44 72 57 67 75 67C93 67 106 72 106 82L111 116H39L44 82Z" fill="${c.shirt}" stroke="#183744" stroke-width="2.8" stroke-linejoin="round"/>
+  <path d="M63 68C67 75 83 75 87 68" fill="#FFFFFF" stroke="#183744" stroke-width="2.3" stroke-linecap="round"/>
+  <path d="M45 83C34 89 33 98 41 103" stroke="#183744" stroke-width="12" stroke-linecap="round"/>
+  <path d="M45 83C34 89 33 98 41 103" stroke="#F8D2BA" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M105 83C115 88 117 94 113 99" stroke="#183744" stroke-width="12" stroke-linecap="round"/>
+  <path d="M105 83C115 88 117 94 113 99" stroke="#F8D2BA" stroke-width="7.5" stroke-linecap="round"/>
+  <rect x="68" y="57" width="14" height="14" rx="5" fill="#F8D2BA" stroke="#183744" stroke-width="2.5"/>
+  <circle cx="50" cy="43" r="5.5" fill="#F8D2BA" stroke="#183744" stroke-width="2.5"/>
+  <circle cx="100" cy="43" r="5.5" fill="#F8D2BA" stroke="#183744" stroke-width="2.5"/>
+  <rect x="51" y="18" width="48" height="46" rx="22" fill="#F8D2BA" stroke="#183744" stroke-width="2.8"/>
+  ${c.hairFront}
+  <path d="M61 36Q65 33 69 36" stroke="#183744" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M81 36Q85 33 89 36" stroke="#183744" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <circle cx="65" cy="42" r="2.8" fill="#183744"/><circle cx="64.2" cy="41" r="1" fill="#FFFFFF"/>
+  <circle cx="85" cy="42" r="2.8" fill="#183744"/><circle cx="84.2" cy="41" r="1" fill="#FFFFFF"/>
+  <ellipse cx="60" cy="48" rx="3.8" ry="2" fill="#F4978E" opacity="0.75"/>
+  <ellipse cx="90" cy="48" rx="3.8" ry="2" fill="#F4978E" opacity="0.75"/>
+  <path d="M69 49Q75 55 81 49" stroke="#183744" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  ${c.accessory}
+ </svg>`;
+}
+
+function renderCategories(){
+ document.getElementById('categories').innerHTML=categories.map((c,i)=>
+ `<button class="category" onclick="chooseCategory('${c[0]}')">${person(i)}<strong>${c[0]}</strong></button>`).join('');
+}
+function chooseCategory(name){ document.getElementById('categoryInput').value=name; updateMinPriceHint(); go('publicar'); }
+
+function updateMinPriceHint() {
+ const cat = document.getElementById('categoryInput').value;
+ const min = minPrices[cat];
+ const hint = document.getElementById('priceHint');
+ document.getElementById('formWalletPreview').textContent = money(clientWalletBalance);
+ if (min) {
+  hint.textContent = `O piso para ${cat} (até 4h) é ${money(min)}. Você pode pagar esse valor ou mais.`;
+ } else {
+  hint.textContent = 'Selecione uma categoria acima para ver o piso.';
+ }
+}
+
+function go(page){
+ if(page==='home') page = role==='cliente' ? 'home' : 'prohome';
+ if(role==='profissional' && (page==='home' || page==='publicar')) page='prohome';
+ if(role==='cliente' && page==='prohome') page='home';
+
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(page).classList.add('active');
+ document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===page || (page==='prohome'&&x.dataset.page==='home')));
+ if(page==='publicar') updateMinPriceHint();
+ if(page==='servicos') renderServices();
+ if(page==='perfil') renderProfile();
+ if(page==='carteira') renderWallet();
+ if(page==='home') renderRecent();
+ if(page==='prohome') renderProOffers();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function clientOrderCard(item) {
+ const isDone = item.status === 'Concluído';
+ const canTip = isDone && !item.tipSent && (Date.now() - item.completedAt <= 30 * 60 * 1000);
+
+ return `<div class="card">
+  <div class="between"><span class="pill">${item.category} · até 4h</span><span class="muted"><strong>${item.status}</strong></span></div>
+  <div class="offer-title">${item.description}</div>
+  <div class="meta">⌖ ${item.neighborhood}, ${item.city}<br>◷ ${item.date} às ${item.time}<br>👷 Profissional: <strong>${assignedProDemo.name}</strong></div>
+  <hr>
+  <div class="between">
+   <div><span class="muted">Valor pago</span><div class="price">${money(item.gross)}</div></div>
+   <button class="secondary" onclick="openProPublicProfile()">Ver perfil e avaliar</button>
+  </div>
+  <div class="actions">
+   ${!isDone ? `<button class="secondary" onclick="openOrderChat('${item.id}')">💬 Chat (abre às 08h)</button>
+   <button class="primary" onclick="clientMarkDone('${item.id}')">Confirmar conclusão</button>` : ''}
+   ${canTip ? `<button class="primary" onclick="openTipModal('${item.id}')">🎁 Enviar gorjeta (até 30 min)</button>` : ''}
+   ${item.tipSent ? `<span class="pill" style="background:var(--green-bg);color:var(--green)">✓ Gorjeta de ${money(item.tipAmount)} enviada via Pix</span>` : ''}
+  </div>
+ </div>`;
+}
+
+function offerCard(item,pro=false,index=0){
+ const displayValue=pro?item.net:item.gross;
+ return `<div class="card">
+ <div class="between"><span class="pill">${item.category} · até 4h</span><span class="muted">${item.status}</span></div>
+ <div class="offer-title">${item.description}</div>
+ <div class="meta">⌖ ${item.neighborhood}, ${item.city}<br>◷ ${item.date} às ${item.time}</div>
+ <hr><div class="muted">${pro?'Você recebe (líquido)':'Valor do pedido'}</div>
+ <div class="price">${money(displayValue)}</div>
+ ${pro&&item.status==='Disponível'?`<div class="actions">
+ <button class="primary" onclick="acceptOffer(${index})">Aceitar oferta</button>
+ <button class="secondary" onclick="declineOffer()">Recusar</button></div>`:''}
+ </div>`;
+}
+
+function demoOffers(){
+ const todayStr = new Date().toLocaleDateString('pt-BR');
+ return [
+ {id:'a',category:'Limpeza',description:'Limpeza completa de apartamento (até 4h)',neighborhood:'Boa Viagem',city:'Recife',date:todayStr,time:'09:00',gross:126,net:119.7,status:'Disponível',paid:true,chat:[{sender:'client',text:'Olá! O porteiro já está avisado.',time:'08:05'}]},
+ {id:'b',category:'Pintura',description:'Pintura de parede interna da sala (até 4h)',neighborhood:'Casa Forte',city:'Recife',date:'21/11/2026',time:'14:00',gross:147,net:139.65,status:'Disponível',paid:true,chat:[]},
+ {id:'c',category:'Montagem',description:'Montagem de guarda-roupa 4 portas (até 4h)',neighborhood:'Piedade',city:'Jaboatão',date:'22/11/2026',time:'10:00',gross:105,net:99.75,status:'Disponível',paid:true,chat:[]}
+ ];
+}
+let sample=demoOffers();
+
+function renderProOffers(){
+ const info = getCredInfo();
+ const availList = sample.filter(x=>x.status==='Disponível');
+
+ document.getElementById('proStatWeek').textContent = `${cred.weeklyCompleted}/5`;
+ document.getElementById('proStatDone').textContent = String(cred.completedPixJobs).padStart(2,'0');
+ document.getElementById('proStatScore').textContent = info.shortLabel;
+
+ const tipArea = document.getElementById('proTipsNotificationArea');
+ tipArea.innerHTML = proReceivedTips.map(t => `
+  <div class="notice success" style="margin-bottom:8px">
+   🎉 <strong>Gorjeta recebida via Pix!</strong> O cliente <strong>${t.clientName}</strong> mandou uma gorjeta de <strong>${money(t.amount)}</strong> direto na sua conta!
+  </div>
+ `).join('');
+
+ let progressHtml = '';
+ if (cred.status === 'new') progressHtml = `<div class="progress-track"><div class="progress-fill" style="width:${Math.min(100,(cred.completedPixJobs/5)*100)}%"></div></div>`;
+ else if (cred.status === 'green') progressHtml = `<div class="progress-track"><div class="progress-fill" style="width:${Math.min(100,(cred.weeklyCompleted/5)*100)}%;background:#1E9E63"></div></div>`;
+ else if (cred.status === 'orange') progressHtml = `<div class="progress-track"><div class="progress-fill" style="width:${Math.min(100,(cred.recoveryStreak/10)*100)}%;background:#D97706"></div></div>`;
+
+ document.getElementById('proHomeCredCard').innerHTML = `
+  <div class="between">
+   <span class="cred-badge ${info.badgeClass}"><span class="cred-dot"></span>${info.title}</span>
+   <button class="link" onclick="go('perfil')">Ver regras</button>
+  </div>
+  ${progressHtml}
+  <div class="muted" style="margin-top:6px;font-size:11px">${info.desc}</div>
+ `;
+
+ if (cred.status === 'red') {
+  document.getElementById('proOffers').innerHTML = `<div class="notice danger"><strong>Conta suspensa por 15 dias (Nota 3.0)</strong><br>Novas ofertas temporariamente bloqueadas.</div>`;
+  return;
+ }
+
+ document.getElementById('proOffers').innerHTML = availList.map(x=>offerCard(x,true,sample.indexOf(x))).join('') || '<div class="empty">Nenhuma oferta disponível agora.</div>';
+}
+
+function acceptOffer(i){
+ if (cred.status === 'red') { showToast('Sua conta está suspensa por 15 dias.'); return; }
+ const item=sample[i];
+ if(!item||item.status!=='Disponível')return;
+ item.status='Aceito';
+ accepted.push(item);
+ showToast('Oferta aceita! Chat disponível a partir das 08h do dia.');
+ renderProOffers(); renderServices(); renderWallet();
+}
+
+function declineOffer(){ showToast('Oferta ignorada.'); }
+
+/* ESTORNO AUTOMÁTICO SE O PROFISSIONAL DESISTIR */
+function cancelAcceptedService(id) {
+ const idx = accepted.findIndex(x => x.id === id);
+ if (idx === -1) return;
+ const item = accepted[idx];
+ item.status = 'Disponível';
+ accepted.splice(idx, 1);
+
+ // Estorna o valor integral para a carteira do cliente
+ clientWalletBalance += item.gross;
+
+ registerAcceptedJobCancellation();
+ renderServices(); renderProOffers(); renderProfile(); renderWallet();
+ showToast(`⚠️ Serviço cancelado pelo profissional. Estorno automático de ${money(item.gross)} depositado na carteira do cliente.`);
+}
+
+function renderServices(){
+ const box=document.getElementById('serviceContent');
+ if(role==='cliente'){
+  document.getElementById('serviceTitle').textContent='Meus pedidos';
+  document.getElementById('serviceSub').textContent='Acompanhe seus pedidos, converse pelo chat no dia ou avalie o profissional.';
+  box.innerHTML=requests.length?requests.map(x=>clientOrderCard(x)).join(''):'<div class="empty">Você ainda não publicou pedidos.<br><br><button class="primary" onclick="go(\'publicar\')">Criar meu primeiro pedido</button></div>';
+ }else{
+  document.getElementById('serviceTitle').textContent='Meus serviços';
+  document.getElementById('serviceSub').textContent='Ofertas que você aceitou realizar.';
+  box.innerHTML=accepted.length?accepted.map(x=>`
+  <div class="card"><span class="pill">${x.status}</span><div class="offer-title">${x.description}</div>
+  <div class="meta">⌖ ${x.neighborhood}, ${x.city}<br>◷ ${x.date} às ${x.time}</div>
+  <div class="muted" style="margin-top:10px">Seu valor líquido</div>
+  <div class="price">${money(x.net)}</div>
+  ${!x.completed?`<div class="actions">
+   <button class="secondary" onclick="openOrderChat('${x.id}')">💬 Abrir Chat</button>
+   <button class="primary" onclick="completeService('${x.id}')">Concluir e receber Pix</button>
+  </div>
+  <button class="secondary full" style="margin-top:8px;color:#C93B3B;border-color:#FAD4D4" onclick="cancelAcceptedService('${x.id}')">Desistir do serviço</button>`
+  :`<div class="notice success" style="margin-top:8px">✓ Serviço concluído. Chat fechado automaticamente.</div>`}</div>`).join(''):'<div class="empty">Você ainda não aceitou serviços.</div>';
+ }
+}
+
+function clientMarkDone(id) {
+ const item = requests.find(x => x.id === id);
+ if (!item || item.status === 'Concluído') return;
+ item.status = 'Concluído';
+ item.completedAt = Date.now();
+ renderServices();
+ renderRecent();
+ openTipModal(id);
+}
+
+function completeService(id){
+ const item=accepted.find(x=>x.id===id);
+ if(!item||item.completed)return;
+ item.completed=true; item.status='Concluído'; item.completedAt = Date.now();
+ proEarnedBalance+=item.net;
+ showToast('Pix de '+money(item.net)+' enviado automaticamente! Chat fechado.');
+ registerCompletedJobWithPix();
+ renderServices(); renderWallet(); renderProOffers(); renderProfile();
+}
+
+function openTipModal(orderId) {
+ activeTipOrderId = orderId;
+ document.getElementById('tipProNameDisplay').textContent = assignedProDemo.name;
+ document.getElementById('tipModalTitle').textContent = `Gorjeta para ${assignedProDemo.name.split(' ')[0]}`;
+ document.getElementById('customTipInput').value = '';
+ document.getElementById('tipModal').classList.remove('hidden');
+}
+
+function closeTipModal() {
+ document.getElementById('tipModal').classList.add('hidden');
+ activeTipOrderId = null;
+}
+
+function sendCustomTip() {
+ const val = Number(document.getElementById('customTipInput').value);
+ if (!val || val <= 0) { showToast('Informe um valor válido.'); return; }
+ sendTip(val);
+}
+
+function sendTip(amount) {
+ const item = requests.find(x => x.id === activeTipOrderId);
+ if (!item) return;
+
+ if (Date.now() - item.completedAt > 30 * 60 * 1000) {
+  showToast('O prazo de 30 minutos após a conclusão já expirou.');
+  closeTipModal();
+  return;
+ }
+
+ if (clientWalletBalance >= amount) {
+  clientWalletBalance -= amount;
+ }
+
+ item.tipSent = true;
+ item.tipAmount = amount;
+
+ proReceivedTips.unshift({
+  clientName: user.name || 'Cliente',
+  amount: amount,
+  time: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
+ });
+
+ closeTipModal();
+ renderServices();
+ renderWallet();
+ showToast(`🎁 Gorjeta de ${money(amount)} enviada via Pix para ${assignedProDemo.name}!`);
+}
+
+function openProPublicProfile() {
+ const hero = document.getElementById('publicProHero');
+ hero.innerHTML = `
+  <div class="profile-avatar">CE</div>
+  <h2>${assignedProDemo.name}</h2>
+  <div class="muted">${assignedProDemo.skills.join(' · ')}</div>
+  <div style="margin-top:8px"><span class="cred-badge cred-green"><span class="cred-dot"></span>Nota ${assignedProDemo.score} · Credibilidade Ótima</span></div>
+ `;
+ renderPublicReviews();
+ go('proPublicProfile');
+}
+
+function renderPublicReviews() {
+ const list = document.getElementById('publicProReviews');
+ list.innerHTML = assignedProDemo.reviews.map(r => `
+  <div class="card">
+   <div class="between"><strong>${r.author}</strong><small class="muted">${r.date}</small></div>
+   <p style="margin:6px 0 0;font-size:12px">${r.text}</p>
+  </div>
+ `).join('');
+}
+
+function submitProReview() {
+ const txt = document.getElementById('newReviewText').value.trim();
+ if (!txt) { showToast('Escreva seu comentário.'); return; }
+ assignedProDemo.reviews.unshift({
+  author: user.name || 'Cliente Verificado',
+  text: txt,
+  date: new Date().toLocaleDateString('pt-BR')
+ });
+ document.getElementById('newReviewText').value = '';
+ renderPublicReviews();
+ showToast('Comentário salvo no perfil do profissional!');
+}
+
+function openOrderChat(orderId) {
+ activeChatOrderId = orderId;
+ const item = (role === 'cliente' ? requests : accepted).find(x => x.id === orderId);
+ if (!item) return;
+
+ const todayStr = new Date().toLocaleDateString('pt-BR');
+ const currentHour = new Date().getHours();
+ const isClosed = item.status === 'Concluído';
+
+ const isServiceDay = item.date === todayStr;
+ const isAfter8AM = currentHour >= 8;
+
+ document.getElementById('chatHeaderTitle').textContent = `Chat · ${item.category}`;
+ document.getElementById('chatHeaderSub').textContent = `Agendado para ${item.date} às ${item.time}`;
+
+ const box = document.getElementById('chatMessagesBox');
+ const inputArea = document.getElementById('chatInputArea');
+ const closedNotice = document.getElementById('chatClosedNotice');
+
+ if (isClosed) {
+  inputArea.classList.add('hidden');
+  closedNotice.textContent = 'Este serviço foi finalizado. O chat foi fechado automaticamente.';
+  closedNotice.classList.remove('hidden');
+ } else if (!isServiceDay || !isAfter8AM) {
+  inputArea.classList.add('hidden');
+  closedNotice.textContent = `O chat só é liberado no dia do serviço (${item.date}) a partir das 08:00 da manhã.`;
+  closedNotice.classList.remove('hidden');
+ } else {
+  inputArea.classList.remove('hidden');
+  closedNotice.classList.add('hidden');
+ }
+
+ renderChatMessages(item);
+ go('chatPage');
+}
+
+function renderChatMessages(item) {
+ const box = document.getElementById('chatMessagesBox');
+ const msgs = item.chat || [];
+ box.innerHTML = msgs.length ? msgs.map(m => `
+  <div class="msg ${m.sender === role ? 'me' : 'other'}">
+   ${m.text}
+   <small>${m.time}</small>
+  </div>
+ `).join('') : '<div class="muted" style="text-align:center;margin:auto">Nenhuma mensagem ainda.</div>';
+}
+
+function sendChatMessage() {
+ const input = document.getElementById('chatMsgInput');
+ const text = input.value.trim();
+ if (!text) return;
+ const item = (role === 'cliente' ? requests : accepted).find(x => x.id === activeChatOrderId);
+ if (!item || item.status === 'Concluído') return;
+
+ if (!item.chat) item.chat = [];
+ item.chat.push({
+  sender: role,
+  text: text,
+  time: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
+ });
+ input.value = '';
+ renderChatMessages(item);
+}
+
+function addClientFunds(amount) {
+ clientWalletBalance += amount;
+ renderWallet();
+ showToast(`✓ ${money(amount)} adicionados à sua carteira via Pix!`);
+}
+
+function addCustomClientFunds() {
+ const val = Number(document.getElementById('customTopupInput').value);
+ if (!val || val < 5) { showToast('Informe um valor mínimo de R$ 5,00.'); return; }
+ document.getElementById('customTopupInput').value = '';
+ addClientFunds(val);
+}
+
+function renderRecent(){
+ document.getElementById('clientRecent').innerHTML=requests.length?
+ clientOrderCard(requests[requests.length-1]):'<div class="empty">Seus pedidos aparecerão aqui.</div>';
+}
+
+document.getElementById('grossPrice').addEventListener('input',e=>{
+ document.getElementById('customerTotal').textContent=money(Number(e.target.value)||0);
+});
+
+document.getElementById('requestForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const cat = document.getElementById('categoryInput').value;
+ const price = Number(document.getElementById('grossPrice').value);
+ const minAllowed = minPrices[cat] || 0;
+
+ if (price < minAllowed) {
+  showToast(`O valor para ${cat} não pode ser menor que o piso de ${money(minAllowed)}.`);
+  return;
+ }
+
+ const date = document.getElementById('date').value;
+ const time = document.getElementById('time').value;
+
+ if (time < '09:00' || time > '17:00') {
+  showToast('Os serviços só podem ser agendados entre 09:00 e 17:00.');
+  return;
+ }
+
+ currentDraft={
+ id:'r'+Date.now(), category:cat,
+ description:document.getElementById('description').value,
+ neighborhood:document.getElementById('neighborhood').value,
+ city:document.getElementById('city').value,
+ address:document.getElementById('address').value,
+ date:date.split('-').reverse().join('/'), time,
+ gross:price, net:price*.95, status:'Em andamento', paid:false,
+ chat:[{sender:'profissional', text:`Olá! Recebi seu pedido de ${cat}. No dia ${date.split('-').reverse().join('/')} estarei disponível!`, time:'08:00'}],
+ tipSent:false, tipAmount:0
+ };
+ document.getElementById('paymentAmount').textContent=money(price);
+ go('pagamento');
+});
+
+function confirmPayment(){
+ if(!currentDraft)return;
+ const method = document.getElementById('paymentMethod').value;
+ if (method === 'wallet') {
+  if (clientWalletBalance < currentDraft.gross) {
+   showToast('Saldo insuficiente na carteira. Adicione saldo ou escolha PIX direto.');
+   return;
+  }
+  clientWalletBalance -= currentDraft.gross;
+ }
+ currentDraft.paid=true;
+ requests.push(currentDraft);
+ sample.unshift({...currentDraft, status:'Disponível'});
+ currentDraft=null;
+ showToast('Pagamento confirmado! Pedido publicado e profissionais notificados.');
+ renderWallet();
+ go('servicos');
+}
+
+function renderWallet(){
+ const isPro = role === 'profissional';
+ document.getElementById('walletHeading').textContent = 'Minha carteira';
+ document.getElementById('walletSub').textContent = isPro ? 'Repasses automáticos via Pix no seu CPF.' : 'Adicione saldo para contratar serviços e enviar gorjetas.';
+ document.getElementById('walletLabel').textContent = isPro ? 'Total já transferido via Pix' : 'Saldo disponível na carteira';
+ document.getElementById('walletCpfNote').textContent = `Titular: ${user.name} · CPF: ${user.cpf}`;
+ document.getElementById('availableBalance').textContent = money(isPro ? proEarnedBalance : clientWalletBalance);
+
+ document.getElementById('clientTopupCard').classList.toggle('hidden', isPro);
+ const bankCard = document.getElementById('proBankCard');
+ bankCard.classList.toggle('hidden', !isPro);
+ if (isPro) {
+  document.getElementById('proBankInfo').innerHTML =
+   `<strong>Titular:</strong> ${user.name}<br><strong>CPF Validado:</strong> ${user.cpf}<br><strong>Chave Pix:</strong> ${user.pix}`;
+ }
+
+ const waiting = accepted.filter(x=>!x.completed);
+ document.getElementById('pendingBalance').innerHTML = (isPro && waiting.length) ?
+  waiting.map(x=>`<div class="between"><span class="muted">${x.category}</span><b>${money(x.net)}</b></div><div class="muted" style="margin:5px 0 12px">Aguardando conclusão para envio automático do Pix</div>`).join('') :
+  '<div class="muted">Nenhum valor pendente.</div>';
+
+ const historyList = isPro ? accepted.filter(x=>x.completed) : requests;
+ document.getElementById('walletHistory').innerHTML = historyList.length ?
+  historyList.map(x=>`<div class="between" style="padding:8px 0"><span class="muted">${x.description}</span><b>${money(isPro ? x.net : x.gross)}</b></div>`).join('') :
+  '<div class="empty">Nenhuma movimentação por enquanto.</div>';
+}
+
+function renderProfile(){
+ const pro = role === 'profissional';
+ document.getElementById('profileHeading').textContent = pro ? 'Perfil profissional' : 'Perfil do cliente';
+ document.getElementById('profileName').textContent = user.name;
+ document.getElementById('profileRole').textContent = pro ? `Profissional · ${user.skills.join(', ')}` : 'Cliente Tem Perto';
+ document.getElementById('profileLocationMeta').textContent = `⌖ ${user.address} - ${user.neighborhood}, ${user.city}`;
+ updateAvatarUI();
+
+ const badgeWrap = document.getElementById('profileCredBadgeWrap');
+ const credSec = document.getElementById('proCredSection');
+
+ if (pro) {
+  const info = getCredInfo();
+  badgeWrap.innerHTML = `<span class="cred-badge ${info.badgeClass}"><span class="cred-dot"></span>${info.shortLabel}</span>`;
+  credSec.classList.remove('hidden');
+
+  let progressBar = '';
+  if (cred.status === 'new') progressBar = `<div class="progress-track"><div class="progress-fill" style="width:${(cred.completedPixJobs/5)*100}%"></div></div>`;
+  else if (cred.status === 'green') progressBar = `<div class="progress-track"><div class="progress-fill" style="width:${(cred.weeklyCompleted/5)*100}%;background:#1E9E63"></div></div>`;
+  else if (cred.status === 'orange') progressBar = `<div class="progress-track"><div class="progress-fill" style="width:${(cred.recoveryStreak/10)*100}%;background:#D97706"></div></div>`;
+
+  document.getElementById('proCredDetailCard').innerHTML = `
+   <div class="between"><strong style="font-size:13px">${info.title}</strong></div>
+   ${progressBar}
+   <p class="muted" style="margin:8px 0 0;font-size:11.5px">${info.desc}</p>
+   <hr>
+   <div class="between" style="font-size:11px"><span class="muted">Concluídos na semana (Meta: 5):</span><strong>${cred.weeklyCompleted}/5</strong></div>
+   <div class="between" style="font-size:11px;margin-top:4px"><span class="muted">Desistências após aceitar:</span><strong>${cred.cancellationsAfterAccept}</strong></div>
+  `;
+
+  document.getElementById('proOwnReviewsList').innerHTML = assignedProDemo.reviews.map(r => `
+   <div class="card"><div class="between"><strong>${r.author}</strong><small class="muted">${r.date}</small></div>
+   <p style="margin:6px 0 0;font-size:12px">${r.text}</p></div>
+  `).join('');
+ } else {
+  badgeWrap.innerHTML = '';
+  credSec.classList.add('hidden');
+ }
+
+ document.getElementById('profileStats').innerHTML = pro ?
+  `<div class="stat"><strong>${cred.weeklyCompleted}/5</strong><small>Meta Semanal</small></div><div class="stat"><strong>${cred.cancellationsAfterAccept}</strong><small>Desistências</small></div><div class="stat"><strong>${cred.score ? cred.score.toFixed(1) : 'Novato'}</strong><small>Credibilidade</small></div>` :
+  `<div class="stat"><strong>${requests.length}</strong><small>Pedidos</small></div><div class="stat"><strong>${money(clientWalletBalance)}</strong><small>Saldo</small></div><div class="stat"><strong>Verificado</strong><small>Conta</small></div>`;
+
+ document.getElementById('profileDataCard').innerHTML = `
+  <div class="meta">
+   <strong>CPF:</strong> ${user.cpf}<br>
+   <strong>Telefone:</strong> ${user.phone}<br>
+   <strong>E-mail:</strong> ${user.email}<br>
+   <strong>Endereço:</strong> ${user.address}, ${user.neighborhood} - ${user.city} (${user.cep})
+   ${pro ? `<br><strong>Chave Pix (mesmo CPF):</strong> ${user.pix}` : ''}
+  </div>
+ `;
+
+ const clientMenu = [
+  ['♙','Editar dados e endereço','Atualizar nome, telefone ou endereço','editar'],
+  ['▤','Meus pedidos','Acompanhe suas solicitações e chats','servicos'],
+  ['▱','Carteira e recarga','Adicionar dinheiro ou ver histórico','carteira']
+ ];
+ const proMenu = [
+  ['♙','Editar dados pessoais','Atualizar telefone ou endereço','editar'],
+  ['▤','Meus serviços aceitos','Trabalhos em andamento e chats','servicos'],
+  ['▱','Carteira e conta Pix','Saldo e dados bancários no seu CPF','carteira']
+ ];
+
+ document.getElementById('profileMenu').innerHTML = (pro ? proMenu : clientMenu).map(x=>
+  `<button class="menu-item" onclick="menuAction('${x[3]}')"><span class="menu-icon">${x[0]}</span>
+  <span><strong>${x[1]}</strong><small>${x[2]}</small></span><span class="arrow">›</span></button>`).join('');
+}
+
+function menuAction(a){
+ if(a==='editar'){
+  document.getElementById('editName').value = user.name;
+  document.getElementById('editPhone').value = user.phone;
+  document.getElementById('editEmail').value = user.email;
+  document.getElementById('editAddress').value = user.address;
+  document.getElementById('editCity').value = user.city;
+  go('editar'); return;
+ }
+ go(a);
+}
+
+function saveProfile(){
+ const newName = document.getElementById('editName').value.trim();
+ if(newName) user.name = newName;
+ user.phone = document.getElementById('editPhone').value.trim();
+ user.email = document.getElementById('editEmail').value.trim();
+ user.address = document.getElementById('editAddress').value.trim();
+ user.city = document.getElementById('editCity').value.trim();
+ document.getElementById('headerLocation').textContent = `⌖ ${user.neighborhood}, ${user.city}`;
+ renderProfile();
+ showToast('Dados atualizados com sucesso!');
+ go('perfil');
+}
+
+function showToast(msg){
+ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block';
+ clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.style.display='none',3200);
+}
+</script>
+</body>
+</html>
